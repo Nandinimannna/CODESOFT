@@ -1,0 +1,72 @@
+import numpy as np 
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+from sklearn.model_selection import train_test_split
+from sklearn.naive_bayes import GaussianNB
+from sklearn.preprocessing import StandardScaler
+from sklearn.linear_model import LogisticRegression
+from sklearn.ensemble import RandomForestClassifier
+from sklearn import metrics
+from sklearn.metrics import classification_report, confusion_matrix
+from sklearn.metrics import f1_score
+from sklearn.metrics import accuracy_score,precision_score,recall_score
+df=pd.read_csv('titanic.csv')
+df
+df.head()
+df.describe()
+print(df.describe(include='all'))
+df.info()
+df.isnull().sum()
+numeric_columns = df.select_dtypes(include=['number'])
+sns.heatmap(numeric_columns.corr(), cmap="YlGnBu")
+plt.show()
+df.sample(5)
+plt.figure(figsize=(10, 6))
+sns.barplot(x=df["Sex"] , y=df["Survived"]  ,palette="viridis")
+plt.xlabel("Sex")
+plt.ylabel("Survived")
+plt.legend()
+plt.figure(figsize=(10, 6))
+sns.scatterplot(y=df["Age"] , x=df["Pclass"] ,hue=df["Survived"] ,palette="viridis")
+plt.xlabel("Survived")
+plt.ylabel("Pclass")
+plt.legend()
+temp = df['Survived'].value_counts()   
+temp_df = pd.DataFrame({'Survived' : temp.index, 'values' : temp.values})   
+sns.barplot(x = 'Survived', y = 'values', data = temp_df)
+plt.show()
+plt.pie(temp_df['values'], labels = [0, 1])
+plt.show()
+print("Ratio of survived to not survived : ", temp_df.loc[1][1]/temp_df.loc[0][1])
+df.head()
+df.drop(['PassengerId', 'Ticket','Cabin'], axis=1,inplace=True)
+df.head()
+df['Sex'].replace({'male':1, 'female':0})
+df['Embarked'].replace({'Q':0, 'S':1, 'C':2},inplace=True)
+df.head()
+sns.heatmap(df.corr(), annot=True, cmap='viridis')
+plt.title('Correlation')
+plt.show()
+round(df['Survived'].value_counts(normalize=True)*100, 2)
+x = df.drop('Survived', axis=1)
+y = df['Survived']
+df.head()
+x_train, x_test, y_train, y_test = train_test_split(x,y, test_size=0.2, random_state=42)
+nb_classifier=GaussianNB()
+nb_classifier.fit(x_train,y_train)
+nb_classifier.score(x_test,y_test)
+y_pred=nb_classifier.predict(x_test)
+print("accuracy:",metrics.accuracy_score(y_test,y_pred))
+print("precision:",metrics.precision_score(y_test,y_pred,))
+print("recall:",metrics.recall_score(y_test,y_pred,))
+print("f1_score:",metrics.f1_score(y_test,y_pred,))
+cs=classification_report(y_test,y_pred)
+print(cs)
+cm=confusion_matrix(y_test,y_pred)
+print(cm)
+nb_classifier.fit(x_train,y_train)
+nb_classifier.score(x_test,y_test)
+x_test[0:10]
+y_test[0:10]
+nb_classifier.predict_proba(x_test[:10])
