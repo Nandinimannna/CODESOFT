@@ -1,0 +1,46 @@
+import numpy as np 
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from imblearn.over_sampling import SMOTE
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import classification_report, confusion_matrix
+from sklearn.metrics import f1_score
+from sklearn.metrics import accuracy_score,precision_score,recall_score
+df=pd.read_csv('credit card data.csv')
+df
+df.head()
+df.tail()
+df.shape
+df.describe()
+df.info()
+df.isnull().sum()
+df.columns
+df.drop(columns=['Time'],inplace=True)
+df.head()
+df['Class'] = df['Class'].apply(lambda x: 1 if x == 1 else 0)
+df['Class'].value_counts()
+df['Class'].value_counts().plot(kind='pie')
+X = df.drop('Class', axis=1)
+y = df['Class']
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+smote = SMOTE(random_state=42)
+X_train_resampled, y_train_resampled = smote.fit_resample(X_train_scaled, y_train)
+scaler = StandardScaler()
+scaler.fit_transform(X_train_resampled)
+scaler.fit_transform(X_test)
+X_train = X_train_resampled
+y_train = y_train_resampled
+model = LogisticRegression(random_state=42)
+model.fit(X_train_resampled, y_train_resampled)
+y_pred = model.predict(X_test_scaled)
+y_pred
+classifier = LogisticRegression(max_iter=1000,random_state=42)
+classifier.fit(X_train_resampled,y_train_resampled)
+predictions = classifier.predict(X_test)
+accuracy = accuracy_score(y_test, predictions)
+report = classification_report(y_test, predictions)
+print(accuracy)
+print(report)
