@@ -3,9 +3,8 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 from sklearn.model_selection import train_test_split
-from sklearn.naive_bayes import GaussianNB
 from sklearn.preprocessing import StandardScaler
-from sklearn.linear_model import LogisticRegression
+from sklearn.impute import SimpleImpute
 from sklearn.ensemble import RandomForestClassifier
 from sklearn import metrics
 from sklearn.metrics import classification_report, confusion_matrix
@@ -51,12 +50,13 @@ plt.show()
 round(df['Survived'].value_counts(normalize=True)*100, 2)
 x = df.drop('Survived', axis=1)
 y = df['Survived']
-df.head()
-x_train, x_test, y_train, y_test = train_test_split(x,y, test_size=0.2, random_state=42)
-nb_classifier=GaussianNB()
-nb_classifier.fit(x_train,y_train)
-nb_classifier.score(x_test,y_test)
-y_pred=nb_classifier.predict(x_test)
+imputer = SimpleImputer(strategy='mean')
+df_imputed = pd.DataFrame(imputer.fit_transform(df), columns=df.columns)
+x_train, x_test, y_train, y_test = train_test_split(df_imputed.drop('Survived', axis=1), df_imputed['Survived'], test_size=0.2, random_state=42)
+model = RandomForestClassifier(random_state=42)
+model.fit(x_train, y_train)
+y_pred = model.predict(x_test)
+y_pred
 print("accuracy:",metrics.accuracy_score(y_test,y_pred))
 print("precision:",metrics.precision_score(y_test,y_pred,))
 print("recall:",metrics.recall_score(y_test,y_pred,))
@@ -65,8 +65,3 @@ cs=classification_report(y_test,y_pred)
 print(cs)
 cm=confusion_matrix(y_test,y_pred)
 print(cm)
-nb_classifier.fit(x_train,y_train)
-nb_classifier.score(x_test,y_test)
-x_test[0:10]
-y_test[0:10]
-nb_classifier.predict_proba(x_test[:10])
