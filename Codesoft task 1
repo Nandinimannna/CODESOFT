@@ -86,4 +86,3 @@ print("\nMetrics for RBF Kernel:")
 print("Accuracy:", accuracy_rbf)
 print("Precision:", precision_rbf) 
 print("Recall:", recall_rbf) 
-
